@@ -178,7 +178,7 @@ class EasyLoading {
   /// should dismiss on user tap.
   bool? dismissOnTap;
   /// should disable back while loading.
-bool? disableBackWhileLoading,
+bool? disableBackWhileLoading;
   /// indicator widget of loading
   Widget? indicatorWidget;
 
