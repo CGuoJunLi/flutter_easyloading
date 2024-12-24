@@ -177,7 +177,8 @@ class EasyLoading {
 
   /// should dismiss on user tap.
   bool? dismissOnTap;
-
+  /// should disable back while loading.
+bool? disableBackWhileLoading,
   /// indicator widget of loading
   Widget? indicatorWidget;
 
@@ -472,6 +473,7 @@ class EasyLoading {
       maskType: maskType,
       dismissOnTap: dismissOnTap,
       completer: completer,
+      disableBackWhileLoading: disableBackWhileLoading ?? false,
     );
     completer.future.whenComplete(() {
       _callback(EasyLoadingStatus.show);
