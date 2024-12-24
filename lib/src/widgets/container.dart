@@ -39,7 +39,7 @@ class EasyLoadingContainer extends StatefulWidget {
   final EasyLoadingMaskType? maskType;
   final Completer<void>? completer;
   final bool animation;
-
+  final bool disableBackWhileLoading;
   const EasyLoadingContainer({
     Key? key,
     this.indicator,
@@ -49,6 +49,7 @@ class EasyLoadingContainer extends StatefulWidget {
     this.maskType,
     this.completer,
     this.animation = true,
+    this.disableBackWhileLoading = false,
   }) : super(key: key);
 
   @override
@@ -136,50 +137,55 @@ class EasyLoadingContainerState extends State<EasyLoadingContainer>
 
   @override
   Widget build(BuildContext context) {
-    return Stack(
-      alignment: _alignment,
-      children: <Widget>[
-        AnimatedBuilder(
-          animation: _animationController,
-          builder: (BuildContext context, Widget? child) {
-            return Opacity(
-              opacity: _animationController.value,
-              child: IgnorePointer(
-                ignoring: _ignoring,
-                child: _dismissOnTap
-                    ? GestureDetector(
-                        onTap: _onTap,
-                        behavior: HitTestBehavior.translucent,
-                        child: Container(
-                          width: double.infinity,
-                          height: double.infinity,
-                          color: _maskColor,
-                        ),
-                      )
-                    : Container(
-                        width: double.infinity,
-                        height: double.infinity,
-                        color: _maskColor,
-                      ),
-              ),
-            );
-          },
-        ),
-        AnimatedBuilder(
-          animation: _animationController,
-          builder: (BuildContext context, Widget? child) {
-            return EasyLoadingTheme.loadingAnimation.buildWidget(
-              _Indicator(
-                status: _status,
-                indicator: widget.indicator,
-              ),
-              _animationController,
-              _alignment,
-            );
-          },
-        ),
-      ],
-    );
+    return WillPopScope(
+        onWillPop: () async {
+          if (widget.disableBackWhileLoading) return false;
+          return true;
+        },
+        child: Stack(
+          alignment: _alignment,
+          children: <Widget>[
+            AnimatedBuilder(
+              animation: _animationController,
+              builder: (BuildContext context, Widget? child) {
+                return Opacity(
+                  opacity: _animationController.value,
+                  child: IgnorePointer(
+                    ignoring: _ignoring,
+                    child: _dismissOnTap
+                        ? GestureDetector(
+                            onTap: _onTap,
+                            behavior: HitTestBehavior.translucent,
+                            child: Container(
+                              width: double.infinity,
+                              height: double.infinity,
+                              color: _maskColor,
+                            ),
+                          )
+                        : Container(
+                            width: double.infinity,
+                            height: double.infinity,
+                            color: _maskColor,
+                          ),
+                  ),
+                );
+              },
+            ),
+            AnimatedBuilder(
+              animation: _animationController,
+              builder: (BuildContext context, Widget? child) {
+                return EasyLoadingTheme.loadingAnimation.buildWidget(
+                  _Indicator(
+                    status: _status,
+                    indicator: widget.indicator,
+                  ),
+                  _animationController,
+                  _alignment,
+                );
+              },
+            ),
+          ],
+        ));
   }
 }
 
